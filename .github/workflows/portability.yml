@@ -1,0 +1,56 @@
+name: Portability
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: x64
+          - os: macos-26
+            arch: arm64
+          - os: windows-2025
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22.0.0'
+      - name: Install and qualify the pinned Node runtime
+        shell: pwsh
+        env:
+          LEGATUS_EXPECTED_ARCH: ${{ matrix.arch }}
+        run: |
+          $actualArch = node -p process.arch
+          if ($LASTEXITCODE -or $actualArch -ne $env:LEGATUS_EXPECTED_ARCH) {
+            throw "Unexpected Node architecture: $actualArch"
+          }
+          npm ci --prefix scripts/agents-sdk --ignore-scripts --omit=optional --no-audit --no-fund
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node scripts/openai-agents.mjs qualify
+          exit $LASTEXITCODE
+      - name: Test Node and MCP
+        run: node --test "scripts/tests/*.test.mjs"
+      - name: Test PowerShell compatibility and recovery
+        shell: pwsh
+        run: |
+          $env:LEGATUS_NODE_EXECUTABLE = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          $expectedVersion = & $env:LEGATUS_NODE_EXECUTABLE --version
+          $repaired = ./scripts/tests/runtime-repair.test.ps1 | ConvertFrom-Json
+          if ($repaired.node -ne $expectedVersion) { throw 'The direct Node and PowerShell runtime selections differ.' }
+          $repaired | ConvertTo-Json
+      - name: Test PowerShell fallback discovery and delegation
+        shell: pwsh
+        run: |
+          ./scripts/tests/delegation.test.ps1
+          ./scripts/tests/buffered-portability.test.ps1

@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "id": "interrupted-responses",
+      "prompt": "Review this synthetic job record. It has a confirmed response ID and then the client connection drops without a terminal event. The caller's retry plan assumes the server did no work and submits the whole request again. Report only justified workflow defects. Use the canonical issue ID DUPLICATE_REPLAY when applicable.",
+      "expected": [
+        "DUPLICATE_REPLAY"
+      ]
+    },
+    {
+      "id": "expired-batch",
+      "prompt": "Review a synthetic Batch audit. Input expects A and B. The terminal Batch expired. Output contains a successful response for A. Error file explicitly lists B as batch_expired with no response. The worker proposes resending both rows. Report only justified workflow defects. Use the canonical issue ID REPLAY_COMPLETED when applicable.",
+      "expected": [
+        "REPLAY_COMPLETED"
+      ]
+    },
+    {
+      "id": "separate-forecast",
+      "prompt": "Review a synthetic launch. Planner computes an estimate and reports that it has no local spend data for other clients. User has granted the task. Launcher keeps the configured provider limit and uses the original request and execution allowance. Forecast is advisory. Report only justified workflow defects. Use the canonical issue IDs ESTIMATE_ENFORCED and HIDDEN_CAPACITY only when applicable.",
+      "expected": []
+    }
+  ],
+  "runs": []
+}

@@ -1,0 +1,1 @@
+{"name":"openai-local-agents-transport","version":"1.0.0","private":true,"dependencies":{"openai":"7.63.0","saxes":"6.0.0"}}

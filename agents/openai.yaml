@@ -1,0 +1,3 @@
+interface:
+  display_name: "Legatus"
+  short_description: "Ten kdo deleguje a vrací se s výsledky."
