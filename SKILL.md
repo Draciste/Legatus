@@ -13,7 +13,8 @@ back to Codex. Invoke it as `$legatus`.
 ## Choose the local entry
 
 Follow the [installation guide](README.md#install-from-source) for a fresh
-checkout. Include the official OpenAI CLI as a fallback and diagnostic client,
+checkout. Register the [bundled read-only MCP](references/workbench.md#read-only-mcp)
+in Codex. Include the official OpenAI CLI as a fallback and diagnostic client,
 and install OpenAI Developers in Codex for its OpenAI Platform app. Only the
 user decides whether to connect the app. The shared Node.js entry
 `scripts/openai-agents.mjs` accepts a UTF-8 JSON invocation
@@ -132,7 +133,7 @@ when an explicit budget is requested. For repeated GPT-6.2 audits, see the promp
 recipe. Prefer the current
 qualified runtime and maintain versions through the [runtime guide](references/runtime-maintenance.md).
 
-Use the optional [workbench](references/workbench.md) for targeted action
+Use the bundled [workbench](references/workbench.md) for targeted action
 discovery, job recovery, partial Batch reconciliation, audit schemas and
 benchmarks, advisory estimates, read-only MCP, or paired Responses transport tests.
 

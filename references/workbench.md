@@ -184,20 +184,48 @@ foreground, Background and Batch execution independent of this calculator.
 [Rate limits](https://developers.openai.com/api/docs/guides/rate-limits) ·
 [Background](https://developers.openai.com/api/docs/guides/background)
 
-## Optional read-only MCP
+<a id="optional-read-only-mcp"></a>
 
-Start the local stdio entry point with the Node executable and absolute path
-to `openai-workbench-mcp.mjs`. Its positional arguments are optional absolute
-paths for the checkpoint directory, result directory, and PowerShell
-executable. An empty directory argument leaves that tool disabled.
+## Read-only MCP
+
+The stdio MCP server ships with Legatus. Register it as `legatus-mcp` during standard Codex setup
+using the Node executable and an absolute path to `openai-workbench-mcp.mjs` in
+the installed skill. Its positional arguments accept optional absolute paths for
+the checkpoint directory, result directory and PowerShell executable. An empty
+directory argument leaves that tool disabled.
 On Windows the server prefers `Program Files/PowerShell/7` and then checks
 `PATH`. On Linux and macOS it checks `PATH` for `pwsh`. An explicit absolute
 executable path takes precedence. If PowerShell is unavailable, the job tool
 reports the missing dependency while the other configured tools still work.
 
+For a full setup, install a supported PowerShell version and use two dedicated
+directories for data you want the MCP client to read. The commands below start
+in the installed skill directory.
+
 ```powershell
-codex mcp add legatus -- $node (Join-Path $scripts 'openai-workbench-mcp.mjs') $jobDirectory $resultDirectory
+$node = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+$mcp = Join-Path $PWD.Path 'scripts/openai-workbench-mcp.mjs'
+. ./scripts/OpenAiPlatform.ps1
+$state = Get-LegatusStateRoot
+$jobs = (New-LegatusStateDirectory (Join-Path $state 'mcp/checkpoints')).FullName
+$results = (New-LegatusStateDirectory (Join-Path $state 'mcp/results')).FullName
+codex mcp add legatus-mcp -- $node $mcp $jobs $results
 ```
+
+```sh
+state="${LEGATUS_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/legatus}"
+if [ "$(uname -s)" = Darwin ] && [ -z "${LEGATUS_STATE_DIR:-}" ]; then
+  state="$HOME/Library/Application Support/Legatus"
+fi
+(umask 077; mkdir -p "$state/mcp/checkpoints" "$state/mcp/results") &&
+  codex mcp add legatus-mcp -- "$(command -v node)" "$PWD/scripts/openai-workbench-mcp.mjs" \
+    "$state/mcp/checkpoints" "$state/mcp/results"
+```
+
+Omit both directory arguments for action discovery alone. To verify the full
+registration, check `codex mcp list` and start a new Codex session to load the
+server. Save checkpoints and results you want it to read in the corresponding
+directory.
 
 It offers `find_action`, `list_jobs` when a checkpoint directory is configured,
 and `read_result` when a result directory is configured. Choose dedicated
@@ -207,7 +235,7 @@ enforce this boundary. Result access is one regular file by basename up to 32 Ki
 Unicode and spaces are supported. A refused result read can return a structured
 code such as `file_not_found`, `file_too_large` with `limitBytes`, or
 `invalid_utf8`. Use CLI or file tools for larger evidence. The server reads local data and uses no API key
-or remote operations. Register it only when its tool interface is useful.
+or remote operations. Use the launchers to submit API work.
 
 The stdio server supports the `initialize` handshake for MCP `2024-11-05`,
 `2025-03-26`, `2025-06-18` and `2025-11-25`. Supply `clientInfo` and the

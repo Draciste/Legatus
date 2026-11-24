@@ -423,7 +423,7 @@ test('MCP job hint preserves UTF-8 paths, resumes an interrupted wait and constr
         ['tools/call', { name: 'read_result', arguments: { name: '../result.md' } }],
     ]);
     assert.equal(replies[0].protocolVersion, '2025-11-25');
-    assert.equal(replies[0].serverInfo.name, 'legatus');
+    assert.equal(replies[0].serverInfo.name, 'legatus-mcp');
     assert.deepEqual(replies[1].tools.map(tool => tool.name), ['find_action', 'list_jobs', 'read_result']);
     const jobs = JSON.parse(replies[2].content[0].text).jobs;
     const job = jobs.find(job => path.basename(job.checkpoint) === path.basename(checkpoint));

@@ -38,6 +38,19 @@ availability depends on the selected OpenAI project and credentials.
 Run `node scripts/openai-agents.mjs catalog` for the exact supported actions
 and their arguments.
 
+## Included components
+
+Every Legatus installation includes the [skill](SKILL.md) and action catalogue,
+the [Node and PowerShell launchers](references/api-workflows.md), the local
+[delegation and recovery tools](references/delegation.md), and the
+[workbench](references/workbench.md). Result validation, runtime installation
+and automated tests are part of the project.
+
+Legatus ships its own [read-only stdio server](references/workbench.md#read-only-mcp)
+for action discovery, checkpoint inventory and reading saved results. Register
+it as `legatus-mcp` as part of standard Codex setup. Checkpoint and result
+access use dedicated local directories.
+
 ## Install from source
 
 Node.js **22+** and npm are required. A standard Legatus installation in Codex
@@ -71,9 +84,10 @@ node scripts/openai-agents.mjs qualify
 
 `qualify` uses a synthetic transport. No API key or billable work is needed.
 For Codex, place this skill folder under `~/.agents/skills/legatus`
-or `.agents/skills/legatus` inside a project. Invoke `$legatus`. Other agents
-can use the same scripts and instructions where their client supports local
-tools.
+or `.agents/skills/legatus` inside a project, then
+[register the bundled MCP](references/workbench.md#read-only-mcp) from that
+installed copy. Invoke `$legatus`. Other agents can use the same scripts and
+instructions where their client supports local tools.
 
 ## Call and recover
 
@@ -137,10 +151,6 @@ for updates, offline installation and separate state roots, and
 - [Promptfoo](references/api-workflows.md#more-involved-integrations) is an
   external option for repeatable comparisons over a versioned evaluation
   dataset using Responses or Decisions.
-- [Stdio MCP](references/workbench.md#optional-read-only-mcp) provides read-only
-  action discovery, checkpoint inventory and saved-result access. Use the
-  command-line launchers for submission. Checkpoint inventory uses `pwsh`.
-
 ## Test
 
 For incidental live API checks the AI initiates for its own workflow, consider

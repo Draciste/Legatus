@@ -373,8 +373,9 @@ save transmission, and prior input can still be billable. Consider WebSocket,
 approved tool adapters, or Responses Multi-agent when the work needs their
 specific latency or orchestration features. Use [Agents API](agents-api.md) for
 managed sessions or the [Agents SDK](https://developers.openai.com/api/docs/guides/agents-sdk)
-for a custom runtime. Local stdio MCP can wrap named operations if typed
-discovery materially helps. A Secure MCP Tunnel serves a different purpose:
+for a custom runtime. The [bundled local MCP](workbench.md#read-only-mcp)
+offers action discovery, checkpoint inventory and saved-result reads.
+A Secure MCP Tunnel serves a different purpose:
 giving remote services access to selected private tools. Provision either on
 demand under the host's normal permissions. Keep admin scopes separate from
 inference. Verify supported capabilities and effective authentication before

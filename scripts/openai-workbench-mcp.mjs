@@ -148,7 +148,7 @@ async function serve(checkpoints, results, powerShell) {
             }
             protocolVersion = versions.includes(requested) ? requested : versions[0];
             return reply({ protocolVersion,
-                serverInfo: { name: 'legatus', version: '1.0.0' }, capabilities: { tools: {} } });
+                serverInfo: { name: 'legatus-mcp', version: '1.0.0' }, capabilities: { tools: {} } });
         }
         if (message.method === 'ping') return reply({});
         if (protocolVersion && message.method === 'tools/list') {
