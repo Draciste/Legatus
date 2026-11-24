@@ -17,6 +17,22 @@ Check the current account, limits and workload before reusing a plan.
   The plan kept scope and evidence separate by project, and an accepted job
   was recovered after the coordinator restarted using the same Response ID.
   Use a final coverage pass to merge overlaps and identify missing areas.
+- **Check voice output with a known recording.** In a local test of
+  `audio.speech.create`, Legatus accepted an AAC-in-MP4 fixture after checking
+  the sample map against the media bytes. The published file matched the
+  original byte for byte. Short `live.audio` fixtures also verified ordered
+  PCM output and sample-aligned partial recovery after disconnection.
+  These checks used local fixtures. They establish output handling and
+  structural checks. For actual voice quality, listen to the output and
+  check the transcript against the requested text or input audio.
+  See [media handling](api-workflows.md#files-tools-and-media) and
+  [Live sessions](extended-workflows.md#gpt-live-and-recording).
+- **Separate live access from endpoint-specific billing.** A minimal
+  `moderations.create` probe on harmless sample text returned HTTP 200 and
+  one classification. In the same audit, a live speech request returned
+  HTTP 429 `credit_balance_exhausted` and produced no file. Use a small probe
+  for the actual operation when its live availability matters. A successful
+  call to one endpoint establishes access only for the operation tested.
 
 The Astra examples used the project API route eligible for linked API credits.
 Their receipts establish accepted work, terminal outcomes and token usage.
