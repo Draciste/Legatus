@@ -35,7 +35,15 @@ jobs:
           if ($LASTEXITCODE -or $actualArch -ne $env:LEGATUS_EXPECTED_ARCH) {
             throw "Unexpected Node architecture: $actualArch"
           }
-          npm ci --prefix scripts/agents-sdk --ignore-scripts --omit=optional --no-audit --no-fund
+          $installArgs = @('ci', '--prefix', 'scripts/agents-sdk', '--ignore-scripts', '--omit=optional', '--no-audit', '--no-fund')
+          if ($IsWindows) {
+            # The npm shim bundled with Node 22.0.0 can pick a missing global npm.
+            $nodePath = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+            $npmCli = Join-Path (Split-Path -Parent $nodePath) 'node_modules/npm/bin/npm-cli.js'
+            & $nodePath $npmCli @installArgs
+          } else {
+            npm @installArgs
+          }
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           node scripts/openai-agents.mjs qualify
           exit $LASTEXITCODE
