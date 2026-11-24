@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import filesystem from 'node:fs/promises';
 import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { runInvocation, runWorkspace } from '../openai-agents.mjs';
 import { estimateWork } from '../openai-workbench.mjs';
 
@@ -311,6 +311,60 @@ test('Live keeps an identified early close distinct from complete input and igno
     } finally { await rm(folder, { recursive: true, force: true }); }
 });
 
+test('Live publishes one ordered PCM clip from multiple ordinary audio chunks', async () => {
+    const pcm = Buffer.from([1, 2, 3, 4, 5, 6, 7, 8]);
+    class AudioReply extends EventTarget {
+        readyState = 1;
+        bufferedAmount = 0;
+        replied = false;
+        constructor() { super(); queueMicrotask(() => this.dispatchEvent(new Event('open'))); }
+        emit(data) { this.dispatchEvent(new MessageEvent('message', { data: JSON.stringify(data) })); }
+        send(payload) {
+            const type = JSON.parse(payload).type;
+            if (type === 'session.start') this.emit({ type: 'session.started', session: { id: 'live_fixture' } });
+            if (type === 'session.input_audio.append' && !this.replied) {
+                this.replied = true;
+                for (const chunk of [pcm.subarray(0, 3), pcm.subarray(3, 6), pcm.subarray(6)]) {
+                    this.emit({ type: 'session.output_audio.delta', delta: chunk.toString('base64') });
+                }
+            }
+            if (type === 'session.close') this.emit({ type: 'session.closed', session: { id: 'live_fixture' },
+                reason: 'close_requested', usage: { seconds: 1 } });
+        }
+        close() {}
+    }
+    const folder = await mkdtemp(join(tmpdir(), 'legatus-live-clip-'));
+    const inputFile = join(folder, 'input.pcm');
+    const outputFile = join(folder, 'output.pcm');
+    const originalOpen = filesystem.open;
+    let writes = 0;
+    filesystem.open = async (...args) => {
+        const file = await originalOpen(...args);
+        if (typeof args[0] === 'string' && basename(args[0]).startsWith('.legatus-part-') && args[1] === 'wx+') {
+            const writeFile = file.writeFile.bind(file);
+            file.writeFile = (...writeArgs) => { writes++; return writeFile(...writeArgs); };
+        }
+        return file;
+    };
+    syncBuiltinESMExports();
+    try {
+        await writeFile(inputFile, Buffer.alloc(4));
+        const client = { live: { create() {} }, WebSocketTransport: AudioReply, apiKey: 'offline-fixture' };
+        const request = { session: { model: 'fixture', audio: { format: { type: 'audio/pcm', rate: 16000 } } },
+            listen_seconds: 1 };
+        const result = await invoke(client, 'live.audio', { inputFile, outputFile, request });
+        assert.equal(result.exit, 0);
+        assert.equal(result.lines[0].data.outputComplete, true);
+        assert.equal(result.lines[0].data.audio.partial, false);
+        assert.equal(writes, 1);
+        assert.deepEqual(await readFile(outputFile), pcm);
+    } finally {
+        filesystem.open = originalOpen;
+        syncBuiltinESMExports();
+        await rm(folder, { recursive: true, force: true });
+    }
+});
+
 test('Live can retain aligned partial audio on disconnect and report silent closure', async () => {
     class SyntheticSocket extends EventTarget {
         readyState = 1;
@@ -332,6 +386,8 @@ test('Live can retain aligned partial audio on disconnect and report silent clos
                 this.emit({ type: 'session.output_audio.delta', delta: 'AQID' });
                 this.emit({ type: 'session.output_transcript.delta', delta: 'partial transcript' });
                 this.dispatchEvent(new Event('close'));
+                this.emit({ type: 'session.output_audio.delta', delta: 'BAU=' });
+                this.emit({ type: 'session.output_transcript.delta', delta: 'late transcript' });
             }
         }
     }
@@ -349,6 +405,7 @@ test('Live can retain aligned partial audio on disconnect and report silent clos
         assert.equal(outcome.data.sessionClosed, false);
         assert.equal(outcome.receipt.outcomeUnconfirmed, true);
         assert.equal(outcome.data.audio.partial, true);
+        assert.equal(outcome.data.receivedBytes, 3);
         assert.equal(outcome.data.outputTranscript, 'partial transcript');
         assert.deepEqual(await readFile(outputFile), Buffer.from([1, 2]));
         const silent = await invoke({ ...client, WebSocketTransport: SyntheticSocket }, 'live.audio',

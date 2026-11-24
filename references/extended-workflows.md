@@ -150,6 +150,13 @@ when the service omits the format. An explicitly unsupported format is rejected.
 If the terminal event confirms closure but reports negative usage,
 `liveUsageVerification=invalid` records the discrepancy separately. With
 `retain_partial` enabled, the verified sample-aligned bytes remain available.
+The launcher buffers up to 16 MiB of reply PCM for a single staged write.
+It stops accepting events and closes the socket on transport or processing
+errors and on cancellation.
+It also stops on more than 32,768 incoming events or 64 Mi UTF-16 code units
+of incoming event text per session. A limit failure has a distinct error code.
+With `retain_partial`, only valid, sample-aligned audio accepted before the
+interruption can be published.
 
 ```powershell
 $live = @{ model=$liveModel; audio=@{format=@{type='audio/pcm';rate=24000}};

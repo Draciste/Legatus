@@ -6,6 +6,9 @@ import { publishFile } from './publish-openai-file.mjs';
 
 const url = 'wss://api.openai.com/v1/live/sessions';
 const maxOutputBytes = 16 * 1024 * 1024;
+const maxEventCharacters = 1024 * 1024;
+const maxSessionEvents = 32 * 1024;
+const maxSessionEventCharacters = 64 * 1024 * 1024;
 const maxSessionDuration = 120;
 
 export async function runLiveAudio(WebSocketTransport, apiKey, handle, destination, params, signal, receipt, record) {
@@ -34,7 +37,9 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
     const output = await open(temporary, 'wx+', 0o600);
     let socket;
     let receivedBytes = 0;
-    let writtenBytes = 0;
+    let outputAudio;
+    let receivedEvents = 0;
+    let receivedEventCharacters = 0;
     let sentBytes = 0;
     let localCloseRequested = false;
     let reportedFormat;
@@ -42,18 +47,27 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
     let inputTranscript = '';
     let outputTranscript = '';
     let transcriptTruncated = false;
-    let outputWork = Promise.resolve();
     let finalEvent;
     let start, close, fail;
     const started = new Promise(resolve => { start = resolve; });
     const ended = new Promise(resolve => { close = resolve; });
     const failure = new Promise((resolve, reject) => { fail = reject; });
-    const abort = () => fail(signal.reason);
+    let closing = false;
+    let transportFailure;
+    const stop = error => {
+        if (closing) return;
+        closing = true;
+        transportFailure = error;
+        fail(error);
+        try { socket?.close(); } catch {}
+    };
+    const abort = () => stop(signal.reason);
     signal.addEventListener('abort', abort, { once: true });
     failure.catch(() => {});
-    let closing = false;
     const awaitSocket = pending => Promise.race([pending, failure]);
     const send = body => {
+        signal.throwIfAborted();
+        if (transportFailure) throw transportFailure;
         if (socket.readyState !== 1 || socket.bufferedAmount > 256 * 1024) {
             throw Error('The Live audio connection cannot accept more input.');
         }
@@ -65,21 +79,16 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
         const inputComplete = sentBytes === input.size;
         const usageVerified = sessionClosed && finalEvent.usage.seconds >= 0;
         const closedNormally = !transportError && usageVerified && localCloseRequested && finalEvent.reason === 'close_requested';
-        const clipLength = () => writtenBytes - writtenBytes % 2;
+        const bytes = receivedBytes - receivedBytes % 2;
         let audio = null;
         let outputError;
-        try { await outputWork; }
-        catch (error) { outputError = { category: error.name, code: error.code }; }
-        const completeMedia = Boolean(receivedBytes && receivedBytes === writtenBytes && writtenBytes % 2 === 0 && !outputError);
-        const partial = !(closedNormally && inputComplete && completeMedia);
+        const partial = !(closedNormally && inputComplete && bytes > 0 && bytes === receivedBytes);
         try {
-            if (!formatRejected && clipLength() && (!partial || retainPartial)) {
-                if (partial) await output.truncate(clipLength());
+            if (!formatRejected && bytes && (!partial || retainPartial)) {
+                const pcm = outputAudio.subarray(0, bytes);
+                await output.writeFile(pcm);
                 await output.sync();
-                const bytes = clipLength();
-                const hash = createHash('sha256');
-                for await (const chunk of output.createReadStream({ start: 0, end: bytes - 1, autoClose: false })) hash.update(chunk);
-                const sha256 = hash.digest('hex');
+                const sha256 = createHash('sha256').update(pcm).digest('hex');
                 await output.close();
                 const publication = await publishFile(temporary, destination, { expectedBytes: bytes, expectedSha256: sha256 });
                 audio = { path: destination, bytes, sha256, publication, format: reportedFormat ?? format,
@@ -101,17 +110,24 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
             Authorization: 'Bearer ' + apiKey, 'X-Client-Request-Id': receipt.clientRequestId,
         } });
         socket.addEventListener('open', () => {
+            if (closing) return;
             try { send({ type: 'session.start', session: { store: false, ...session } }); }
-            catch (error) { fail(error); }
+            catch (error) { stop(error); }
         });
-        socket.addEventListener('error', () => fail(Error('Live WebSocket transport failed.')));
-        socket.addEventListener('close', () => {
-            if (!closing) fail(Error('Live disconnected before session.closed.'));
-        });
+        socket.addEventListener('error', () => stop(Error('Live WebSocket transport failed.')));
+        socket.addEventListener('close', () => stop(Error('Live disconnected before session.closed.')));
         socket.addEventListener('message', event => {
-            if (finalEvent || closing) return;
+            if (closing) return;
             try {
-                if (typeof event.data !== 'string' || event.data.length > 1024 * 1024) throw Error('Unexpected Live event size or encoding.');
+                signal.throwIfAborted();
+                if (typeof event.data !== 'string' || event.data.length > maxEventCharacters) throw Error('Unexpected Live event size or encoding.');
+                if (++receivedEvents > maxSessionEvents) {
+                    throw Object.assign(Error('Live session event count exceeded.'), { code: 'LIVE_EVENT_COUNT_LIMIT' });
+                }
+                receivedEventCharacters += event.data.length;
+                if (receivedEventCharacters > maxSessionEventCharacters) {
+                    throw Object.assign(Error('Live session event data budget exceeded.'), { code: 'LIVE_EVENT_DATA_LIMIT' });
+                }
                 const body = JSON.parse(event.data);
                 if (body.type === 'error') throw Object.assign(Error('Live API returned a session error.'),
                     { code: body.error?.code, type: body.error?.type, param: body.error?.param });
@@ -146,10 +162,13 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
                         (body.delta.endsWith('=') && body.delta.length % 4 !== 0)) {
                         throw Error('Live output audio has invalid base64.');
                     }
-                    if (receivedBytes + data.length > maxOutputBytes) throw Error('Live output audio budget exceeded.');
+                    if (receivedBytes + data.length > maxOutputBytes) {
+                        throw Object.assign(Error('Live output audio budget exceeded.'), { code: 'LIVE_AUDIO_BYTE_LIMIT' });
+                    }
+                    // Keep one bounded clip. Event fragmentation must not enqueue disk writes.
+                    outputAudio ??= Buffer.alloc(maxOutputBytes);
+                    data.copy(outputAudio, receivedBytes);
                     receivedBytes += data.length;
-                    outputWork = outputWork.then(async () => { await output.writeFile(data); writtenBytes += data.length; });
-                    outputWork.catch(fail);
                 }
                 if (typeof body.delta === 'string') {
                     if (body.type === 'session.input_transcript.delta') {
@@ -170,7 +189,7 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
                     closing = true;
                     close();
                 }
-            } catch (error) { fail(error); }
+            } catch (error) { stop(error); }
         });
         await awaitSocket(Promise.race([started, ended]));
         if (!receipt.liveSessionId) throw Error('Live ended before starting.');
@@ -209,13 +228,13 @@ export async function runLiveAudio(WebSocketTransport, apiKey, handle, destinati
         await record('live_closed', { outputBytes: receivedBytes, closeReason: finalEvent.reason });
         return await collectOutput();
     } catch (error) {
+        stop(error);
         if (!retainPartial || !socket) throw error;
         return await collectOutput(error);
     } finally {
         closing = true;
         signal.removeEventListener('abort', abort);
         try { socket?.close(); } catch {}
-        await outputWork.catch(() => {});
         await output.close().catch(() => {});
         await unlink(temporary).catch(() => {});
     }
