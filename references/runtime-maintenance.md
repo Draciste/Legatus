@@ -79,7 +79,8 @@ has a ten-minute local deadline and can be retained for inspection.
 
 ## Update companion tools
 
-- **OpenAI CLI.** Check the official release and local `--version`. Compare
+- **OpenAI CLI.** Keep this standard fallback and diagnostic client installed.
+  Check the official release and local `--version`. Compare
   changed command shapes, structured input/output, retry and authentication
   behavior on the routes we use. Qualify the candidate before promoting it
   to the established executable path. Use offline native discovery for commands
@@ -90,6 +91,10 @@ has a ten-minute local deadline and can be retained for inspection.
   Use the prepared tiktoken environment for larger text or other cached
   encodings, and InputTokens over HTTP or SDK for framed requests.
   [OpenAI CLI guide](https://developers.openai.com/api/docs/libraries/openai-cli)
+- **OpenAI Platform in Codex.** Keep OpenAI Developers installed on supported
+  Codex surfaces. When the user has connected the app, check relevant panel
+  capabilities and organization scope if an update affects planning or
+  diagnostics. [Platform billing and diagnostics](platform-billing.md)
 - **Node and PowerShell.** Check the SDK's Node requirement, native WebSocket
   behavior and platform architecture. Recheck the launcher under the chosen
   PowerShell. Use a fresh process for changed compiled credential/transport

@@ -6,8 +6,25 @@ describes how an agent should select and use these routes.
 
 ## Install from source
 
-Run commands from the checkout root. Node.js **22+** and npm are required.
-Install the locked SDK and check the local interface:
+Node.js **22+** and npm are required. A standard Legatus installation in Codex
+also requires both of the following companion tools.
+
+1. Install the [official OpenAI CLI](https://developers.openai.com/api/docs/libraries/openai-cli).
+   It provides a separate API route and helps isolate failures in the primary
+   transport. On Linux and macOS, make `openai` available on `PATH`. For the
+   Windows PowerShell helper, place the official executable at
+   `%LOCALAPPDATA%\Programs\OpenAI-CLI\bin\openai.exe`. Check `openai --version`
+   or run the Windows executable by its full path.
+2. In Codex, install the [OpenAI Developers plugin](https://developers.openai.com/learn/developers-codex-plugin)
+   to get its **OpenAI Platform** app. The app provides account information
+   that helps plan and diagnose API work, including remaining API credits,
+   organization context and usage. Connecting the app is the user's choice.
+   See [Platform billing and diagnostics](references/platform-billing.md).
+
+The core HTTP and SDK paths use their own project credential and also work in
+headless environments or agent hosts without the Platform app.
+
+Install the locked SDK and check the local interface from the checkout root.
 
 ```text
 npm ci --prefix scripts/agents-sdk --ignore-scripts --omit=optional
@@ -71,14 +88,6 @@ for updates, offline installation and separate state roots, and
 
 ## Optional tools
 
-- [OpenAI Platform in OpenAI Developers](references/platform-billing.md) can
-  provide on-demand information for API work and troubleshooting, including
-  organization context, balance, usage and subscription benefit status. The
-  API launchers work independently with their selected project credential.
-
-- [OpenAI CLI](https://github.com/openai/openai-cli#installation) provides a
-  separate native API route. The buffered helper discovers it from `PATH` on
-  Linux/macOS. Windows retains its existing installation paths.
 - [Stdio MCP](references/workbench.md#optional-read-only-mcp) provides read-only
   action discovery, checkpoint inventory and saved-result access. Use the
   command-line launchers for submission. Checkpoint inventory uses `pwsh`.

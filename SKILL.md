@@ -12,8 +12,11 @@ back to Codex. Invoke it as `$legatus`.
 
 ## Choose the local entry
 
-Use the [portable quick start](README.md) for a fresh checkout. The shared
-Node.js entry `scripts/openai-agents.mjs` accepts a UTF-8 JSON invocation
+Follow the [installation guide](README.md#install-from-source) for a fresh
+checkout. Include the official OpenAI CLI as a fallback and diagnostic client,
+and install OpenAI Developers in Codex for its OpenAI Platform app. Only the
+user decides whether to connect the app. The shared Node.js entry
+`scripts/openai-agents.mjs` accepts a UTF-8 JSON invocation
 on stdin. `doctor`, `catalog` and `qualify` can be passed as arguments and
 work offline. Live calls read `OPENAI_API_KEY` from the process environment.
 
@@ -37,12 +40,13 @@ can adequately perform the check. User-requested testing or artifact audits
 follow the task's normal model selection and quality requirements. Check
 current model and project eligibility when it matters.
 
-When useful for API work or diagnosis, optionally inspect any relevant
-information exposed by the installed, connected OpenAI Platform app in Codex.
-Match its organization and project scope to the selected API credential.
-For balance checks, report amount, currency and observation time. See
-[optional Platform plugin](references/platform-billing.md) for diagnostic
-examples, billing, browser fallbacks and key setup.
+When the user has connected OpenAI Platform, use its account information as
+needed for routing, cost planning and diagnosis. It is the available in-Codex
+source for directly observing remaining API credit without opening a separate
+signed-in browser. Match its organization and project scope to the selected
+API credential. For balance checks, report amount, currency and observation
+time. See [Platform billing and diagnostics](references/platform-billing.md)
+for browser fallbacks and key setup.
 
 For these API calls, use global adaptive routing to choose the model family,
 version and supported reasoning effort based on task demands, expected quality
@@ -147,8 +151,10 @@ receive the saved key. Ordinary Security retains its native configuration.
 The local launcher still depends on the installed applications and system trust.
 
 HTTP is the default for Models, Responses, RetrieveResponse and InputTokens.
-For the official native CLI use `-Transport Cli`. Linux/macOS discovers
-`openai` on `PATH`. The Windows installation uses
+Use the official native CLI with `-Transport Cli` as a fallback or to compare
+read-only results, such as a model list, when diagnosing the primary transport.
+Check whether the provider accepted an earlier write before replaying it on
+another transport. Linux/macOS discovers `openai` on `PATH`. Windows uses
 `%LOCALAPPDATA%\Programs\OpenAI-CLI\bin\openai.exe`.
 The helper passes Responses JSON through explicit `--request-file -`. CLI
 1.56.1 can retry a Responses POST on some transient errors. For InputTokens

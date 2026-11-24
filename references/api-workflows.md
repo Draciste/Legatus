@@ -11,8 +11,9 @@ eligibility for the specific operation, model, mode and tool charges. Refresh
 uncertain or stale details when material to route choice. Preserve the user's
 requirements and ordinary cost authorization. Report uncertain coverage as
 unknown and use billing evidence to confirm credits actually applied.
-[Optional OpenAI Platform plugin](platform-billing.md) covers on-demand account
-information, diagnostics, balance, grant expiry and incentive usage.
+[Platform billing and diagnostics](platform-billing.md) explains how to use the
+connected OpenAI Platform app and signed-in billing views for account
+diagnostics, balance, grant expiry and incentive usage.
 [API credit terms](https://developers.openai.com/api/docs/guides/chatgpt-api-credits)
 
 ## Choose a route
@@ -21,10 +22,13 @@ information, diagnostics, balance, grant expiry and incentive usage.
 - Use the existing SDK launcher `openai-agents.ps1` for raw JSON results with
   receipts, SSE, Decisions, file transfer, retrieval, and managed sessions.
   Run `catalog` for valid actions, parameter placement, and file options.
-- Use `openai explore KEYWORDS` and `openai COMMAND --help` locally to discover
-  native CLI capabilities. Prefer structured formats when scripting. Use a
-  verified connection and explicit project authentication before live native
-  calls. The wrappers select the credential for the platform and scope.
+- Use the official OpenAI CLI as a fallback or for a read-only comparison when
+  diagnosing the primary client. Discover native capabilities with
+  `openai explore KEYWORDS` and `openai COMMAND --help`. Prefer structured
+  formats when scripting. Use a verified connection and explicit project
+  authentication before live native calls. The wrappers select the credential
+  for the platform and scope. Verify server acceptance before replaying a
+  timed-out write.
 
 ```powershell
 $directory = (Resolve-Path ./scripts).Path

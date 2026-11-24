@@ -1,9 +1,12 @@
-# Optional OpenAI Platform plugin and API billing
+# OpenAI Platform app and API billing
 
-Use the OpenAI Platform app bundled in OpenAI Developers if the user already
-has it installed and connected and it helps with the task. Legatus uses its
-selected project API credential independently. The plugin connection, ordinary
-Codex sign-in, and subscription-to-API-organization link are distinct.
+Install [OpenAI Developers](https://developers.openai.com/learn/developers-codex-plugin)
+as part of standard Legatus setup in Codex. It includes the OpenAI Platform app.
+Connecting the app is optional and left to the user. Once connected, it provides
+account information that can change how work is planned or how a failure is
+diagnosed. Legatus uses its selected project API credential independently.
+The app connection, ordinary Codex sign-in, and subscription-to-API-organization
+link are distinct.
 
 ## On-demand information and diagnostics
 
@@ -64,10 +67,12 @@ Platform view or API route for fields the app does not expose.
 | Is this project enrolled for daily complimentary tokens for shared traffic? | Check the organization and project scope in [Data controls → Sharing](https://platform.openai.com/settings/organization/data-controls/sharing). Verify actual usage in [Usage](https://platform.openai.com/usage/chat-completions) grouped by service tier, with input and output selected. The [program's current model and billing requirements](https://help.openai.com/en/articles/10306912-sharing-feedback-evaluation-and-fine-tuning-data-and-api-inputs-and-outputs-with-openai) apply. |
 | What usage and charges were recorded? | The appropriate provider receipt and [Usage and Costs](https://platform.openai.com/usage), with the correct organization, project and time range. |
 
-The authenticated Codex panel was verified to show an organization balance
-without a separate browser window. The available `open_dashboard` action
-does not return balance data in its tool response. Keep the observation
-attributed to the visible panel or to the signed-in billing page.
+The authenticated panel is the available in-Codex source for observing the
+organization's remaining credit without a separate signed-in browser. The
+`open_dashboard` action opens the panel. Read the value from the panel itself.
+The project API, OpenAI CLI and Admin usage and costs routes cannot supply that
+remaining-credit figure. Keep the observation attributed to the visible panel
+or the signed-in billing page.
 
 ## Optional Admin usage and costs
 
@@ -140,4 +145,3 @@ secret values out of prompts, logs and command lines. Existing authorized
 project keys keep their normal Legatus route. If the app is unavailable,
 use ordinary Platform key management and provision the key through the
 existing Legatus credential mechanism for the current OS.
-[OpenAI Developers plugin](https://developers.openai.com/learn/developers-codex-plugin)
