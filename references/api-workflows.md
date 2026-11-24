@@ -381,9 +381,9 @@ demand under the host's normal permissions. Keep admin scopes separate from
 inference. Verify supported capabilities and effective authentication before
 assuming a mode is available or draws from a grant.
 
-For recurring measurement, pair inexpensive deterministic checks with a
-versioned dataset and measured Responses/Decisions calls. Promptfoo can run
-comparative evaluations, and Plugin Eval can test which workflows Codex uses.
-Introduce either at the point where it provides reproducible value. Check the
-current deprecation schedule for legacy Evals, prompts and Assistants routes.
-[Promptfoo migration](https://developers.openai.com/cookbook/examples/evaluation/moving-from-openai-evals-to-promptfoo)
+For recurring measurement, use a versioned dataset and measured Responses or
+Decisions calls alongside deterministic checks. The
+[Workbench benchmark](workbench.md#structured-audit-findings-and-benchmark)
+compares saved results. [Plugin Eval](../SKILL.md#optional-integrations)
+can test which workflows Codex uses. Check the current deprecation schedule
+when migrating workflows that still use legacy Evals, prompts or Assistants.

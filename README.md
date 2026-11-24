@@ -148,9 +148,6 @@ for updates, offline installation and separate state roots, and
 - [OpenAI tiktoken](SKILL.md#token-counts) counts tokens in local text offline
   when the matching encoding is cached. Legatus uses the API input-count
   operation to count complete request framing.
-- [Promptfoo](references/api-workflows.md#more-involved-integrations) is an
-  external option for repeatable comparisons over a versioned evaluation
-  dataset using Responses or Decisions.
 ## Test
 
 For incidental live API checks the AI initiates for its own workflow, consider
