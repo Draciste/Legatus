@@ -18,7 +18,10 @@ also requires both of the following companion tools.
 2. In Codex, install the [OpenAI Developers plugin](https://developers.openai.com/learn/developers-codex-plugin)
    to get its **OpenAI Platform** app. The app provides account information
    that helps plan and diagnose API work, including remaining API credits,
-   organization context and usage. Connecting the app is the user's choice.
+   organization context and usage. If the app is unconnected, the agent
+   should offer a one-time, strong recommendation to sign in and explain why.
+   Sign-in is the user's choice. API calls still work, but the agent lacks
+   direct visibility into key account data for planning credit use.
    See [Platform billing and diagnostics](references/platform-billing.md).
 
 The core HTTP and SDK paths use their own project credential and also work in

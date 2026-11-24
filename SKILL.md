@@ -40,13 +40,18 @@ can adequately perform the check. User-requested testing or artifact audits
 follow the task's normal model selection and quality requirements. Check
 current model and project eligibility when it matters.
 
-When the user has connected OpenAI Platform, use its account information as
-needed for routing, cost planning and diagnosis. It is the available in-Codex
-source for directly observing remaining API credit without opening a separate
-signed-in browser. Match its organization and project scope to the selected
-API credential. For balance checks, report amount, currency and observation
-time. See [Platform billing and diagnostics](references/platform-billing.md)
-for browser fallbacks and key setup.
+If OpenAI Platform is unconnected, give the user a one-time, strong
+recommendation to sign in at the first suitable opportunity. Explain that
+it is Legatus's only direct in-Codex source for key account data such as
+remaining API credits. API work still runs without the connection, but
+credit-aware planning and billing diagnosis are limited unless there is another verified source. Leave sign-in
+to the user and continue with the available evidence.
+
+When connected, use the app as needed for routing, cost planning and
+diagnosis. Match its organization and project scope to the selected API
+credential. For balance checks, report amount, currency and observation time.
+See [Platform billing and diagnostics](references/platform-billing.md) for
+browser fallbacks and key setup.
 
 For these API calls, use global adaptive routing to choose the model family,
 version and supported reasoning effort based on task demands, expected quality

@@ -8,6 +8,14 @@ diagnosed. Legatus uses its selected project API credential independently.
 The app connection, ordinary Codex sign-in, and subscription-to-API-organization
 link are distinct.
 
+If the app is unconnected, offer a one-time, strong recommendation to sign in
+during setup or the first relevant API planning conversation. Explain that
+it is Legatus's only direct in-Codex source for figures such as remaining API
+credit. The project key can still submit work, but without verified account
+data the agent cannot reliably tell whether credits will cover a planned run
+or size the run against the available balance. Continue without requiring sign-in and leave
+unverified billing details unknown.
+
 ## On-demand information and diagnostics
 
 Inspect whichever relevant information the connected app currently exposes
