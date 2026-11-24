@@ -4,6 +4,40 @@ Legatus submits work to the OpenAI API, records its outcome, and helps local
 agents recover results. It supports Linux, macOS and Windows. The [skill](SKILL.md)
 describes how an agent should select and use these routes.
 
+## OpenAI capabilities
+
+Listed in the order most useful for everyday Legatus work. Model and feature
+availability depends on the selected OpenAI project and credentials.
+
+1. [Responses API](references/api-workflows.md) for general analysis,
+   delegation, structured outputs, and tools such as web and file search.
+   Legatus can stream, submit in the background, and resume supported work.
+2. [Agents API and Workspace Agents](references/agents-api.md) for managed
+   sessions, multi-step work, and retrieval of turns and artifacts.
+   [Workspace Agents](references/extended-workflows.md#workspace-agents) can
+   trigger configured workflows with their own credential.
+3. [Batch API and deferred work](references/deferred-work.md) for independent
+   requests that can wait, with job tracking and result recovery.
+4. [Decisions API](references/api-workflows.md#decisions-and-structured-outputs)
+   for classification, scoring, and routing from typed answers.
+5. [OpenAI Daybreak](references/agents-api.md#optional-daybreak) for defensive
+   analysis through Responses or Agents, with eligible models such as
+   GPT‑6 Cyber when the API project has the required approval.
+6. [Images API](references/api-workflows.md#files-tools-and-media) for
+   generation and editing with GPT‑Image 2.6 Sunburst or Flare, and local
+   checks on saved image files.
+7. [Audio and GPT‑Live](references/extended-workflows.md#gpt-live-and-recording)
+   for speech synthesis, transcription, and voice sessions with GPT‑Live 1.1,
+   including capture of audio and available transcripts.
+8. [OpenAI API resource operations](references/api-workflows.md#files-tools-and-media)
+   for files and uploads, Conversations, vector stores, embeddings, moderation,
+   API skills, and containers. Separate
+   [Admin reads](references/platform-billing.md#optional-admin-usage-and-costs)
+   cover recorded usage and costs with authorized admin credentials.
+
+Run `node scripts/openai-agents.mjs catalog` for the exact supported actions
+and their arguments.
+
 ## Install from source
 
 Node.js **22+** and npm are required. A standard Legatus installation in Codex
@@ -91,11 +125,21 @@ for updates, offline installation and separate state roots, and
 
 ## Optional tools
 
+- [Codex Security CLI](https://learn.chatgpt.com/docs/security/cli/reference)
+  runs defensive repository reviews from a local checkout and returns
+  findings and coverage for inspection. Legatus can call it through its
+  native or Windows WSL route.
+- [Plugin Eval](SKILL.md#optional-integrations) evaluates Codex skills and
+  plugins, including whether Codex discovers and uses the intended workflows.
+- [OpenAI tiktoken](SKILL.md#token-counts) counts tokens in local text offline
+  when the matching encoding is cached. Legatus uses the API input-count
+  operation to count complete request framing.
+- [Promptfoo](references/api-workflows.md#more-involved-integrations) is an
+  external option for repeatable comparisons over a versioned evaluation
+  dataset using Responses or Decisions.
 - [Stdio MCP](references/workbench.md#optional-read-only-mcp) provides read-only
   action discovery, checkpoint inventory and saved-result access. Use the
   command-line launchers for submission. Checkpoint inventory uses `pwsh`.
-- The native Codex Security CLI is optional. Windows also has a local WSL
-  adapter. Core API workflows and local job recovery work independently.
 
 ## Test
 
