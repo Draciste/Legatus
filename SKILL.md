@@ -427,3 +427,9 @@ receipt rate headers describe a request observation, with method and UTC time
 when available. Use fresh scope-matched capacity evidence for forecasts.
 
 [Codex Security CLI](https://github.com/openai/codex-security/blob/main/sdk/typescript/docs/cli.md) · [API credit terms](https://developers.openai.com/api/docs/guides/chatgpt-api-credits#what-the-credits-cover)
+
+## Worked examples
+
+For examples of successful, long-running and failed delegations, see
+[field examples](references/field-examples.md). Use them to plan monitoring,
+load balancing, credit checks and recovery for a new task.

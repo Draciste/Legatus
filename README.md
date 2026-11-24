@@ -162,3 +162,9 @@ pwsh -NoProfile -File scripts/tests/buffered-portability.test.ps1
 
 Tests use synthetic requests and local fixtures. The [CI matrix](.github/workflows/portability.yml)
 exercises a clean checkout with public dependencies and no API credentials.
+
+## Field examples
+
+For AI agents learning Legatus, see [worked examples](references/field-examples.md)
+of remote audits, credit evidence, long-running Astra work, rate limits and
+checkpoint-based recovery.
