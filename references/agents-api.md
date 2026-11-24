@@ -74,9 +74,18 @@ remain advisory. Limits do not replace the charges recorded by the provider.
 
 ## Optional Daybreak
 
-For an approved defensive review, use `sessions.create` with the root
-`access_programs.cyber` field. Verify the selected key's named non-default API
-project, its access setting and the model's required approval. The
+For an approved defensive review, first verify the API access:
+
+1. Open the API organization approved by OpenAI for the required Daybreak
+   program. The existing organization can be used if it has that approval.
+2. An API organization owner selects a named non-default project and explicitly
+   enables the approved level under **Project settings → General →
+   Daybreak model access**. The owner adds the approved users to that project.
+3. Use an API key from that project and check the model's approval requirements.
+   ChatGPT or Codex access and visibility in a model list are separate signals.
+
+See [API project setup](https://help.openai.com/en/articles/20001531-openai-daybreak-set-up-access-for-your-team).
+For `sessions.create`, use the root `access_programs.cyber` field. The
 [Daybreak matrix](https://developers.openai.com/api/docs/guides/daybreak)
 is authoritative for supported combinations. `doctor` and `catalog` describe
 local request support. `ProjectHint` is a caller-supplied label.
