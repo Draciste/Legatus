@@ -1,7 +1,48 @@
 # Field examples for agents new to Legatus
 
-Use these historical runs as examples of how to plan, submit, monitor and
-recover work. The model choices, timings and costs describe those runs.
+## Responses API as a remote lab
+
+Legatus can send work to OpenAI and collect the result later. When a task
+needs a terminal or a place to create files, a supported tool can also give
+the model a temporary execution environment. Choose the environment by what
+the task needs to do.
+
+- **Remote model work.** A Responses request can review a supplied diff,
+  analyze data already in the prompt, or write a structured report. Use
+  `background` for a supported long-running request, save the Response ID,
+  and retrieve its status and result with the same project credential.
+  Background mode governs delivery. A terminal comes from a separate tool. The DevAiAye audit on Astra Max used this route for static
+  source review split into independent parts.
+- **A temporary remote lab.** Hosted Shell and Code Interpreter can work in
+  OpenAI-managed containers. Use Hosted Shell for terminal-based processing
+  and Code Interpreter for Python analysis. Typical tasks include comparing
+  structured files, running calculations, or producing a report that needs
+  to be downloaded as a file. The VM comparison is useful for thinking
+  about files, processes and isolation. OpenAI manages the container and its
+  lifetime. Hosted Shell runs commands non-interactively and without `sudo`.
+  Check the chosen
+  tool's capabilities before assuming network access or a particular runtime.
+- **A remote workspace across several turns.** A supported Agents API
+  session can keep the work in one conversation and use a sandbox when
+  execution needs continuity. Track which turn produced each result and
+  collect its artifacts through the session's own interface. Session state
+  and sandbox files have separate lifecycles.
+
+For an artifact-producing task, tell the model what files to deliver. Record
+the job ID and the returned container and file references, or the session and
+artifact references. Download the actual bytes while the environment still
+has them and verify the format, contents and expected scope. In one Legatus
+audit, the final response pointed to a report in a Responses container.
+Collecting the report required a separate download. This pattern keeps
+execution, delivery and verification visible as separate steps.
+
+[Background](https://developers.openai.com/api/docs/guides/background) ·
+[Hosted Shell](https://developers.openai.com/api/docs/guides/tools-shell) ·
+[Code Interpreter](https://developers.openai.com/api/docs/guides/tools-code-interpreter) ·
+[Agents API](https://developers.openai.com/api/docs/guides/agents-api)
+
+Use the historical runs below to practice planning, submitting, monitoring and
+recovering work. The model choices, timings and costs describe those runs.
 Check the current account, limits and workload before reusing a plan.
 
 ## Work that delivered results
