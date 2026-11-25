@@ -15,6 +15,21 @@ an OpenAI project API key. We haven't tested this yet. 😂
 **First Public Release** — The software works and the documentation is
 still in progress.
 
+**OpenAI setup** — In the OpenAI dashboard, select the API organization that
+holds your credits. For standard API work, you can use its Default project.
+Create a project API key with an expiration date that suits you and use it
+with Legatus. Eligible requests covered by active free or promotional API
+credits do not require a payment method.
+[OpenAI API credits](https://developers.openai.com/api/docs/guides/chatgpt-api-credits)
+
+Choose the remaining settings to suit your workflow. For research and other
+tasks that benefit from current information, I strongly recommend enabling
+internet access in the OpenAI sandbox when available. Access to relevant
+sources can materially improve the result. Use a domain allowlist where the
+chosen tool supports one.
+[Sandbox network access](https://developers.openai.com/api/docs/guides/agents-api/environments/openai-hosted#control-network-access) ·
+[Hosted Shell network access](https://developers.openai.com/api/docs/guides/tools-shell#network-access)
+
 Legatus submits work to the OpenAI API, records its outcome, and helps local
 agents recover results. It supports Linux, macOS and Windows. The [skill](SKILL.md)
 describes how an agent should select and use these routes.
