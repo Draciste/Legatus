@@ -5,7 +5,7 @@ description: Use an OpenAI project key for Responses, Decisions, files, managed 
 
 # LEGATVS NATVS
 
-> Ten kdo deleguje a vrací se s výsledky.
+> He who delegates and returns to the AI bearing the results.
 
 Legatus submits work through the OpenAI API, tracks it, and brings the results
 back to Codex. Invoke it as `$legatus`.
