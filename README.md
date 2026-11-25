@@ -211,3 +211,37 @@ execution, delivery and verification visible as separate steps.
 [Hosted Shell](https://developers.openai.com/api/docs/guides/tools-shell) ·
 [Code Interpreter](https://developers.openai.com/api/docs/guides/tools-code-interpreter) ·
 [Agents API](https://developers.openai.com/api/docs/guides/agents-api)
+
+## License and contributions
+
+Legatus is released under the [MIT License](LICENSE).
+
+Even a small voluntary contribution is appreciated. AI tokens aren't cheap. 🤷🏻
+[Buy me a coffee](https://buymeacoffee.com/draciste)
+
+## Disclaimer
+
+Legatus is offered on an **“as is”** basis under the [MIT License](LICENSE).
+Anyone using it assumes the risks of their deployment. MIT permits commercial
+use, forking and redistribution. Support is voluntary.
+
+- **Liability.** The MIT License's warranty and liability provisions apply to
+  Legatus, including its use to submit jobs, work with files and invoke
+  connected tools.
+- **Support and maintenance.** Responses to questions, bug and security
+  fixes, maintenance and future releases are at the maintainer's discretion.
+  Users should plan for those services to be unavailable.
+- **Production use.** Before deploying Legatus, evaluate it in your own
+  environment. You are responsible for validating the selected account and
+  permissions, protecting credentials and data, retaining needed backups,
+  testing workflows and observing your organization's rules and applicable law.
+- **Independent project.** Legatus is developed independently of OpenAI and
+  the other vendors whose services or tools it works with. Product and company
+  names identify compatibility and remain the property of their respective
+  owners. Contact the Legatus maintainer for project-specific issues.
+- **Published test results.** Tests and compatibility notes apply to the
+  versions and conditions they document. Evaluate suitability for your own
+  deployment before relying on those results.
+- **Forks and redistribution.** You may redistribute or fork Legatus, including
+  commercially, under the MIT terms. The people distributing those versions
+  are responsible for their changes and any support they choose to offer.
