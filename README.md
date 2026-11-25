@@ -4,6 +4,8 @@ Legatus submits work to the OpenAI API, records its outcome, and helps local
 agents recover results. It supports Linux, macOS and Windows. The [skill](SKILL.md)
 describes how an agent should select and use these routes.
 
+**Capabilities:** Batch, Background jobs, Hosted terminal, Sandboxes, Managed agents, Streaming, Web and file search, Structured outputs, Image generation and editing, Live voice, Speech synthesis and transcription, Token and cost estimates, Checkpoints and recovery, Read-only MCP.
+
 ## OpenAI capabilities
 
 Listed in the order most useful for everyday Legatus work. Model and feature
