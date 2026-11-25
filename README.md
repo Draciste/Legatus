@@ -1,6 +1,6 @@
 # Legatus / Legát
 
-*He who delegates and returns to the AI bearing the results.*
+*“He who delegates and returns to the AI bearing the results.”*
 
 Legatus submits work to the OpenAI API, records its outcome, and helps local
 agents recover results. It supports Linux, macOS and Windows. The [skill](SKILL.md)
