@@ -2,6 +2,19 @@
 
 *“He who delegates and returns to the AI bearing the results.”*
 
+**Primary** — Put the free or promotional API credits shown in your OpenAI
+dashboard to work on everyday AI tasks that qualify for those credits.
+
+**Secondary** — Use the broader range of OpenAI tools and workflows that
+Legatus brings together.
+
+**Unexpected bonus** — Other AI agents may also be able to work directly
+with OpenAI models if they can load the skill, run its dependencies, and use
+an OpenAI project API key. We haven't tested this yet. 😂
+
+**First Public Release** — The software works and the documentation is
+still in progress.
+
 Legatus submits work to the OpenAI API, records its outcome, and helps local
 agents recover results. It supports Linux, macOS and Windows. The [skill](SKILL.md)
 describes how an agent should select and use these routes.
